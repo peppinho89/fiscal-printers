@@ -1,7 +1,7 @@
 import { Parser } from 'xml2js';
-import { EPOSCancelFiscalReceiptResponse } from '../interfaces/epos-cancel-fiscal-receipt-response.interface';
-import { EPOSFiscalPrintReceiptResponse } from '../interfaces/epos-fiscal-print-receipt-response';
-import { EPOSPrintZReportResponse } from '../interfaces/epos-print-z-report-response.interface';
+import { EPOSCancelFiscalReceiptResponse } from '../models/epos-cancel-fiscal-receipt-response';
+import { EPOSFiscalPrintReceiptResponse } from '../models/epos-fiscal-print-receipt-response';
+import { EPOSPrintZReportResponse } from '../models/epos-print-z-report-response';
 
 const envelopeKey = 'soapenv:Envelope';
 const bodyKey = 'soapenv:Body';

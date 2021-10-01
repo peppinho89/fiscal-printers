@@ -1,4 +1,4 @@
-export interface EPOSPrintZReportResponse {
+export class EPOSPrintZReportResponse {
   success?: boolean;
   code?: string;
   lastCommand?: string;

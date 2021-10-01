@@ -1,11 +1,11 @@
 import { EPOSFiscalPrinterModeEnum } from '../epson-ePOS/enums/epos-fiscal-printer-mode.enum';
 import { EPOSPaymentTypeEnum } from '../epson-ePOS/enums/epos-payment-type.enum';
 import { EPOSFiscalPrinter } from '../epson-ePOS/index';
-import { EPOSFiscalPrintReceiptResponse } from '../epson-ePOS/interfaces/epos-fiscal-print-receipt-response';
-import { EPOSPrintRecItem } from '../epson-ePOS/interfaces/epos-print-rec-item.interface';
+import { EPOSFiscalPrintReceiptResponse } from '../epson-ePOS/models/epos-fiscal-print-receipt-response';
+import { EPOSPrintRecItem } from '../epson-ePOS/models/epos-print-rec-item';
 import * as moment from 'moment';
-import { EPOSPrintZReportResponse } from '../epson-ePOS/interfaces/epos-print-z-report-response.interface';
-import { EPOSCancelFiscalReceiptResponse } from '../epson-ePOS/interfaces/epos-cancel-fiscal-receipt-response.interface';
+import { EPOSPrintZReportResponse } from '../epson-ePOS/models/epos-print-z-report-response';
+import { EPOSCancelFiscalReceiptResponse } from '../epson-ePOS/models/epos-cancel-fiscal-receipt-response';
 
 jest.setTimeout(20000);
 
@@ -13,36 +13,8 @@ test('Epson Fiscal Printer - Print Fiscal Receipt', async () => {
   const fp = new EPOSFiscalPrinter('', EPOSFiscalPrinterModeEnum.TEST);
 
   const items: EPOSPrintRecItem[] = [
-    {
-      description: 'Pasta al sugo',
-      department: '',
-      quantity: 4,
-      unitPrice: 10.0,
-    },
-    {
-      description: 'Patatine fritte',
-      department: '',
-      quantity: 2,
-      unitPrice: 5.5,
-    },
-    {
-      description: 'Acqua naturale',
-      department: '',
-      quantity: 1,
-      unitPrice: 2.5,
-    },
-    {
-      description: 'Coca Cola',
-      department: '',
-      quantity: 1,
-      unitPrice: 2.0,
-    },
-    {
-      description: 'Coperto',
-      department: '',
-      quantity: 4,
-      unitPrice: 1.0,
-    },
+    new EPOSPrintRecItem({ description: 'Patatine fritte', quantity: 4, unitPrice: 10, taxRateCode: 'IT-VAT-22' }),
+    new EPOSPrintRecItem({ description: 'Acqua naturale', quantity: 4, unitPrice: 10, taxRateCode: 'IT-VAT-22' }),
   ];
 
   const res = await fp.printFiscalReceipt(items, EPOSPaymentTypeEnum.CASH, 'PAGAMENTO EUR');

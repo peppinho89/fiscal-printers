@@ -1,4 +1,4 @@
-export interface EPOSFiscalPrintReceiptResponse {
+export class EPOSFiscalPrintReceiptResponse {
   success?: boolean;
   code?: string;
   status?: string;

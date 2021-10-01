@@ -1,6 +1,21 @@
 import { EPOSPaymentTypeEnum } from '../enums/epos-payment-type.enum';
 import * as moment from 'moment';
 
+export function getDepartmentByTaxrateCode(taxrateCode: string) {
+  switch (taxrateCode) {
+    case 'IT-VAT-0':
+      return '1';
+    case 'IT-VAT-4':
+      return '2';
+    case 'IT-VAT-5':
+      return '3';
+    case 'IT-VAT-10':
+      return '4';
+    case 'IT-VAT-22':
+      return '5';
+  }
+}
+
 export function getPrintRecTotalIndexByPaymentType(paymentType: EPOSPaymentTypeEnum): string {
   switch (paymentType) {
     case EPOSPaymentTypeEnum.CASH:

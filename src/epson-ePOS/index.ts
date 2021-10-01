@@ -1,20 +1,25 @@
 import { EPOSFiscalPrinterModeEnum } from './enums/epos-fiscal-printer-mode.enum';
 import { EPOSPaymentTypeEnum } from './enums/epos-payment-type.enum';
 import { EPOSPrintRecSubtotalOptionEnum } from './enums/epos-print-rec-subtotal-option.enum';
-import { EPOSPrintRecItem } from './interfaces/epos-print-rec-item.interface';
-import { EPOSPrintRecSubtotalAdjustment } from './interfaces/epos-subtotal-adjustment.interface';
-import { setXmlParameters, getPrintRecTotalIndexByPaymentType, SEND_AVAILABLE_COMMANDS } from './utils/epos-utils';
+import { EPOSPrintRecItem } from './models/epos-print-rec-item';
+import { EPOSPrintRecSubtotalAdjustment } from './models/epos-subtotal-adjustment';
+import {
+  setXmlParameters,
+  getPrintRecTotalIndexByPaymentType,
+  SEND_AVAILABLE_COMMANDS,
+  getDepartmentByTaxrateCode,
+} from './utils/epos-utils';
 import { Builder, Parser } from 'xml2js';
 import axios from 'axios';
-import { EPOSFiscalPrintReceiptResponse } from './interfaces/epos-fiscal-print-receipt-response';
-import { EPOSPrintZReportResponse } from './interfaces/epos-print-z-report-response.interface';
+import { EPOSFiscalPrintReceiptResponse } from './models/epos-fiscal-print-receipt-response';
+import { EPOSPrintZReportResponse } from './models/epos-print-z-report-response';
 import { ErrorResponse } from '../common/error-response.interface';
 import {
   parseEPOSCancelFiscalReceiptXmlResponse,
   parseEPOSFiscalPrintXmlResponse,
   parseEPOSPrintZReportXmlResponse,
 } from './utils/epos-parser';
-import { EPOSCancelFiscalReceiptResponse } from './interfaces/epos-cancel-fiscal-receipt-response.interface';
+import { EPOSCancelFiscalReceiptResponse } from './models/epos-cancel-fiscal-receipt-response';
 import { FiscalPrinter } from '../common/fiscal-printer.interface';
 
 export class EPOSFiscalPrinter implements FiscalPrinter {
@@ -82,8 +87,9 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
     try {
       const printRecItem = items.map((item) => ({
         $: {
-          operator: this.operator,
           ...item,
+          operator: this.operator,
+          taxRateCode: getDepartmentByTaxrateCode(item.taxrateCode),
         },
       }));
 
