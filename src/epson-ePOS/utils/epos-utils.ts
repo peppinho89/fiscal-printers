@@ -4,15 +4,17 @@ import * as moment from 'moment';
 export function getDepartmentByTaxrateCode(taxrateCode: string) {
   switch (taxrateCode) {
     case 'IT-VAT-0':
-      return '1';
+      return '0';
     case 'IT-VAT-4':
-      return '2';
+      return '1';
     case 'IT-VAT-5':
-      return '3';
-    case 'IT-VAT-10':
       return '4';
+    case 'IT-VAT-10':
+      return '2';
     case 'IT-VAT-22':
-      return '5';
+      return '3';
+    default:
+      return '2';
   }
 }
 

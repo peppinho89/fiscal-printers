@@ -89,7 +89,7 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
         $: {
           ...item,
           operator: this.operator,
-          taxRateCode: getDepartmentByTaxrateCode(item.taxrateCode),
+          department: getDepartmentByTaxrateCode(item.taxrateCode),
         },
       }));
 

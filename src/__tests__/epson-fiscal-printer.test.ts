@@ -70,7 +70,10 @@ test('Epson Fiscal Printer - Cancel Fiscal Receipt', async () => {
 });
 
 test('Epson Fiscal Printer - Print Z Report Live error', async () => {
-  const fp = new EPOSFiscalPrinter('http://192.192.192.192', EPOSFiscalPrinterModeEnum.LIVE);
+  const fp = new EPOSFiscalPrinter(
+    ' http://0.0.0.0/cgi-bin/fpmate.cgi?devid=local_printer&timeout=10000',
+    EPOSFiscalPrinterModeEnum.LIVE,
+  );
 
   const res = await fp.dailyClosure();
 
