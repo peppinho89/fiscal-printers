@@ -51,8 +51,6 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
 
     const xml = new Builder({ xmldec: { version: '1.0', encoding: 'UTF-8' } }).buildObject(bodyWithAllXmlparameters);
 
-    console.log(xml);
-
     if (this.mode === EPOSFiscalPrinterModeEnum.LIVE) {
       return await new Promise((resolve, reject) => {
         axios
