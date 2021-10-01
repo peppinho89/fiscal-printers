@@ -1,1 +1,1 @@
-export { EPOSFiscalPrinter as FiscalPrinter } from './epson-ePOS/index';
+export { EPOSFiscalPrinter } from './epson-ePOS/index';
