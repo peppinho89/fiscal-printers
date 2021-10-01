@@ -30,7 +30,7 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
     fiscalPrinterAddress: string,
     mode: EPOSFiscalPrinterModeEnum = EPOSFiscalPrinterModeEnum.TEST,
     timeout: number = 5000,
-    operator: string = '01',
+    operator: string = '1',
   ) {
     this.requestUrl = fiscalPrinterAddress;
     this.operator = operator;
@@ -131,7 +131,8 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
               description: paymentDescription,
               payment: payment || '0',
               paymentType,
-              computedIndex,
+              index: computedIndex,
+              justification: '1',
             },
           },
           endFiscalReceipt: {

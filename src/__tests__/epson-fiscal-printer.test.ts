@@ -13,8 +13,20 @@ test('Epson Fiscal Printer - Print Fiscal Receipt', async () => {
   const fp = new EPOSFiscalPrinter('', EPOSFiscalPrinterModeEnum.TEST);
 
   const items: EPOSPrintRecItem[] = [
-    new EPOSPrintRecItem({ description: 'Patatine fritte', quantity: 4, unitPrice: 10, taxRateCode: 'IT-VAT-22' }),
-    new EPOSPrintRecItem({ description: 'Acqua naturale', quantity: 4, unitPrice: 10, taxRateCode: 'IT-VAT-22' }),
+    new EPOSPrintRecItem({
+      description: 'Patatine fritte',
+      quantity: 1,
+      unitPrice: 2.5,
+      taxRateCode: 'IT-VAT-10',
+      justification: '',
+    }),
+    new EPOSPrintRecItem({
+      description: 'Acqua naturale',
+      quantity: 2,
+      unitPrice: 1.5,
+      taxRateCode: 'IT-VAT-22',
+      justification: '',
+    }),
   ];
 
   const res = await fp.printFiscalReceipt(items, EPOSPaymentTypeEnum.CASH, 'PAGAMENTO EUR');

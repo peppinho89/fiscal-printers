@@ -8,11 +8,11 @@ export interface IPrintRecItem {
 
 export class EPOSPrintRecItem {
   constructor(printRecItemObj?: IPrintRecItem) {
-    this.description = printRecItemObj?.description || '';
+    this.description = printRecItemObj?.description || 'Generico';
     this.quantity = printRecItemObj?.quantity || 0;
     this.unitPrice = printRecItemObj?.unitPrice || 0;
     this.taxrateCode = printRecItemObj?.taxRateCode || '';
-    this.justification = printRecItemObj?.justification || '';
+    this.justification = printRecItemObj?.justification || '1';
   }
   description: string;
   quantity: number;
