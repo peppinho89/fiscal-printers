@@ -21,6 +21,12 @@ export class EPOSPrintFiscalReceiptInput {
     this.items = printFiscalReceiptInputObj?.items || [];
     this.paymentType = printFiscalReceiptInputObj?.paymentType || EPOSPaymentTypeEnum.CASH;
     this.paymentDescription = printFiscalReceiptInputObj?.paymentDescription || 'PAGAMENTO EUR';
+    this.itemAdjustments = printFiscalReceiptInputObj?.itemAdjustments || [];
+    this.index = printFiscalReceiptInputObj?.index || '';
+    this.subtotalAdjustment = printFiscalReceiptInputObj?.subtotalAdjustment || undefined;
+    this.subtotalOption = printFiscalReceiptInputObj?.subtotalOption || EPOSPrintRecSubtotalOptionEnum.ONLY_PRINT;
+    this.payment = printFiscalReceiptInputObj?.payment || 0;
+    this.footerMessages = printFiscalReceiptInputObj?.footerMessages || [];
   }
   items: EPOSPrintRecItem[];
   paymentType: EPOSPaymentTypeEnum;
@@ -30,5 +36,5 @@ export class EPOSPrintFiscalReceiptInput {
   subtotalAdjustment?: EPOSPrintRecSubtotalAdjustment;
   subtotalOption?: EPOSPrintRecSubtotalOptionEnum;
   payment?: number;
-  footerMessages?: EPOSPrintRecMessage;
+  footerMessages?: EPOSPrintRecMessage[];
 }
