@@ -81,10 +81,6 @@ export const SEND_AVAILABLE_COMMANDS = {
     </soapenv:Envelope>`,
   },
   CANCEL_FISCAL_RECEIPT: {
-    command: '1078',
-    data: (documentNumber: string, formattedDate: string) =>
-      `0140001ANNULLAMENTO N.${documentNumber} del ${formattedDate} `,
-    timeout: '1000',
     fakeResponse: `
     <?xml version="1.0" encoding="utf-8"?>
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">

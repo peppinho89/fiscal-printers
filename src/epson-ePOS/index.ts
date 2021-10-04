@@ -9,7 +9,7 @@ import {
   SEND_AVAILABLE_COMMANDS,
   getDepartmentByTaxrateCode,
 } from './utils/epos-utils';
-import { Builder, Parser } from 'xml2js';
+import { Builder } from 'xml2js';
 import axios from 'axios';
 import { EPOSFiscalPrintReceiptResponse } from './models/epos-fiscal-print-receipt-response';
 import { EPOSPrintZReportResponse } from './models/epos-print-z-report-response';
@@ -21,6 +21,9 @@ import {
 } from './utils/epos-parser';
 import { EPOSCancelFiscalReceiptResponse } from './models/epos-cancel-fiscal-receipt-response';
 import { FiscalPrinter } from '../common/fiscal-printer.interface';
+import { EPOSPrintRecItemAdjustment } from './models/epos-print-rec-item-adjustment';
+import * as moment from 'moment';
+import { IEPOSPrintFiscalReceiptInput } from './models/epos-print-fiscal-receipt-input';
 
 export class EPOSFiscalPrinter implements FiscalPrinter {
   public requestUrl: string;
@@ -76,16 +79,10 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
    * @param payment Amount paid by the customer
    */
   async printFiscalReceipt(
-    items: EPOSPrintRecItem[],
-    paymentType: EPOSPaymentTypeEnum,
-    paymentDescription: string,
-    index?: string,
-    subtotalAdjustment?: EPOSPrintRecSubtotalAdjustment,
-    subtotalOption?: EPOSPrintRecSubtotalOptionEnum,
-    payment?: number,
+    options: IEPOSPrintFiscalReceiptInput,
   ): Promise<EPOSFiscalPrintReceiptResponse | ErrorResponse> {
     try {
-      const printRecItem = items.map((item) => ({
+      const printRecItem = options.items.map((item) => ({
         $: {
           operator: this.operator,
           description: item.description,
@@ -96,19 +93,46 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
         },
       }));
 
+      let printRecItemAdjustment = null;
+      if (options.itemAdjustments) {
+        printRecItemAdjustment = options.itemAdjustments.map((item) => ({
+          $: {
+            operator: this.operator,
+            adjustmentType: item.adjustmentType,
+            description: item.description,
+            amount: item.amount,
+            department: getDepartmentByTaxrateCode(item.taxrateCode),
+            justification: item.justification,
+          },
+        }));
+      }
+
       let printRecSubtotalAdjustment = null;
-      if (subtotalAdjustment) {
+      if (options.subtotalAdjustment) {
         printRecSubtotalAdjustment = {
           $: {
             operator: this.operator,
-            adjustmentType: subtotalAdjustment.adjustmentType,
-            description: subtotalAdjustment.description,
-            amount: subtotalAdjustment.amount,
+            adjustmentType: options.subtotalAdjustment.adjustmentType,
+            description: options.subtotalAdjustment.description,
+            amount: options.subtotalAdjustment.amount,
           },
         };
       }
 
-      const computedIndex = index || getPrintRecTotalIndexByPaymentType(paymentType);
+      let printRecMessage = null;
+      if (options.footerMessages) {
+        printRecMessage = options.footerMessages.map((item, i) => ({
+          $: {
+            operator: this.operator,
+            message: item.message,
+            messageType: item.messageType,
+            font: item.font,
+            index: (i + 1).toString(),
+          },
+        }));
+      }
+
+      const computedIndex = options.index || getPrintRecTotalIndexByPaymentType(options.paymentType);
 
       const body = {
         printerFiscalReceipt: {
@@ -118,23 +142,25 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
             },
           },
           printRecItem,
+          ...(printRecItemAdjustment && { printRecItemAdjustment }),
           ...(printRecSubtotalAdjustment && { printRecSubtotalAdjustment }),
           printRecSubtotal: {
             $: {
               operator: this.operator,
-              option: subtotalOption || '1',
+              option: options.subtotalOption || '1',
             },
           },
           printRecTotal: {
             $: {
               operator: this.operator,
-              description: paymentDescription,
-              payment: payment || '0',
-              paymentType,
+              description: options.paymentDescription,
+              payment: options.payment || '0',
+              paymentType: options.paymentType,
               index: computedIndex,
               justification: '1',
             },
           },
+          ...(printRecMessage && { printRecMessage }),
           endFiscalReceipt: {
             $: {
               operator: this.operator,
@@ -155,21 +181,39 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
 
   /**
    * Description: cancel fiscal receipt
-   * @param documentNumber number of fiscalReceiptNumber
-   * @param formattedDate date formatted eg. DD-MM-YYYY
+   * @param documentNumber number of fiscalReceiptNumber (zRep-counter eg. 0134-0001)
+   * @param date Payment Date
+   * @param fiscalPrinterSerialNumber
    */
   async cancelFiscalReceipt(
     documentNumber: string,
-    formattedDate: string,
+    date: Date,
+    fiscalPrinterSerialNumber: string,
   ): Promise<EPOSCancelFiscalReceiptResponse | ErrorResponse> {
     try {
+      if (fiscalPrinterSerialNumber.length !== 11) {
+        throw new Error('invalid serial number');
+      }
+
+      const splittedDocumentNumber = documentNumber.split('-');
+      if (!splittedDocumentNumber || splittedDocumentNumber.length !== 2) {
+        throw new Error('invalid document number format');
+      }
+
+      const zRepNumber = splittedDocumentNumber[0];
+      const dailyCounterNumber = splittedDocumentNumber[1];
+
+      const dateString = moment(date).format('DDMMYYYY');
+
+      const message = `VOID ${zRepNumber} ${dailyCounterNumber} ${dateString} ${fiscalPrinterSerialNumber}`;
+
       const body = {
-        printerCommand: {
-          directIO: {
+        printerFiscalReceipt: {
+          printRecMessage: {
             $: {
-              command: SEND_AVAILABLE_COMMANDS.CANCEL_FISCAL_RECEIPT.command,
-              data: SEND_AVAILABLE_COMMANDS.CANCEL_FISCAL_RECEIPT.data(documentNumber, formattedDate),
-              timeout: SEND_AVAILABLE_COMMANDS.CANCEL_FISCAL_RECEIPT.timeout,
+              operator: this.operator,
+              messageType: '4',
+              message,
             },
           },
         },
