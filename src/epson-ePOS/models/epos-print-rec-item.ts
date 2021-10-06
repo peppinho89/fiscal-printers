@@ -11,12 +11,12 @@ export class EPOSPrintRecItem {
     this.description = printRecItemObj?.description || 'Generico';
     this.quantity = printRecItemObj?.quantity || 0;
     this.unitPrice = printRecItemObj?.unitPrice || 0;
-    this.taxrateCode = printRecItemObj?.taxRateCode || '';
+    this.taxRateCode = printRecItemObj?.taxRateCode || '';
     this.justification = printRecItemObj?.justification || '1';
   }
   description: string;
   quantity: number;
   unitPrice: number;
-  taxrateCode: string;
+  taxRateCode: string;
   justification: string;
 }

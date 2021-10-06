@@ -88,7 +88,7 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
           description: item.description,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
-          department: getDepartmentByTaxrateCode(item.taxrateCode),
+          department: getDepartmentByTaxrateCode(item.taxRateCode),
           justification: item.justification,
         },
       }));
@@ -115,6 +115,7 @@ export class EPOSFiscalPrinter implements FiscalPrinter {
             adjustmentType: options.subtotalAdjustment.adjustmentType,
             description: options.subtotalAdjustment.description,
             amount: options.subtotalAdjustment.amount,
+            justification: options.subtotalAdjustment.justification,
           },
         };
       }

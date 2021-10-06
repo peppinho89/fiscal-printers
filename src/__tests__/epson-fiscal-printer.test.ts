@@ -12,8 +12,10 @@ import {
   EPOSPrintRecAdjustmentTypeEnum,
   EPOSPrintRecItemAdjustmentTypeEnum,
   EPOSPrintRecMessageTypeEnum,
+  EPOSPrintRecSubtotalOptionEnum,
 } from '../epson-ePOS/enums';
 import { EPOSPrintRecMessage } from '../epson-ePOS/models/epos-print-rec-message';
+import { EPOSPrintRecSubtotalAdjustment } from '../epson-ePOS/models/epos-subtotal-adjustment';
 
 jest.setTimeout(20000);
 
@@ -22,48 +24,112 @@ test('Epson Fiscal Printer - Print Fiscal Receipt', async () => {
 
   const items: EPOSPrintRecItem[] = [
     new EPOSPrintRecItem({
-      description: 'Taxi',
+      description: 'Car',
       quantity: 1,
       unitPrice: 10,
-      taxRateCode: 'IT-VAT-10',
-      justification: '',
+      taxRateCode: 'IT-VAT-4',
+      justification: '1',
     }),
     new EPOSPrintRecItem({
-      description: 'Champagne',
+      description: 'Service Charge Airport Transfert',
       quantity: 1,
-      unitPrice: 10,
-      taxRateCode: 'IT-VAT-10',
-      justification: '',
+      unitPrice: 0,
+      taxRateCode: 'IT-VAT-4',
+      justification: '1',
+    }),
+    new EPOSPrintRecItem({
+      description: 'Service Charge Airport Transfert',
+      quantity: 1,
+      unitPrice: 0,
+      taxRateCode: 'IT-VAT-4',
+      justification: '1',
+    }),
+    new EPOSPrintRecItem({
+      description: 'Service Charge Airport Transfert',
+      quantity: 1,
+      unitPrice: 0,
+      taxRateCode: 'IT-VAT-4',
+      justification: '1',
+    }),
+    new EPOSPrintRecItem({
+      description: 'Dinner 05/10/2021',
+      quantity: 2,
+      unitPrice: 15,
+      taxRateCode: 'IT-VAT-4',
+      justification: '1',
+    }),
+    new EPOSPrintRecItem({
+      description: 'Night 05/10/2021',
+      quantity: 1,
+      unitPrice: 50,
+      taxRateCode: 'IT-VAT-4',
+      justification: '1',
+    }),
+    new EPOSPrintRecItem({
+      description: 'Dinner 04/10/2021',
+      quantity: 2,
+      unitPrice: 15,
+      taxRateCode: 'IT-VAT-4',
+      justification: '1',
+    }),
+    new EPOSPrintRecItem({
+      description: 'Night 04/10/2021',
+      quantity: 1,
+      unitPrice: 50,
+      taxRateCode: 'IT-VAT-4',
+      justification: '1',
     }),
   ];
 
   const itemAdjustments: EPOSPrintRecItemAdjustment[] = [
     new EPOSPrintRecItemAdjustment({
       adjustmentType: EPOSPrintRecItemAdjustmentTypeEnum.DEPOSIT,
-      amount: 10,
-      description: 'Res n. 123456',
-      taxRateCode: 'IT-VAT-10',
-    }),
-    new EPOSPrintRecItemAdjustment({
-      adjustmentType: EPOSPrintRecItemAdjustmentTypeEnum.DEPOSIT,
-      amount: 10,
-      description: 'Res n. 123456',
-      taxRateCode: 'IT-VAT-10',
+      amount: 100,
+      description: 'Res n. 7',
+      justification: '1',
+      taxRateCode: 'IT-VAT-4',
     }),
   ];
 
   const footerMessages: EPOSPrintRecMessage[] = [
     new EPOSPrintRecMessage({
-      message: 'Ciro Immobile',
-      font: EPOSFontEnum.DOUBLE_HEIGHT,
       messageType: EPOSPrintRecMessageTypeEnum.TRAILER,
+      font: EPOSFontEnum.DOUBLE_HEIGHT,
+      message: 'dev-test',
     }),
     new EPOSPrintRecMessage({
-      message: 'Arrivo 20/10/2021 - Partenza 25/10/2021',
-      font: EPOSFontEnum.NORMAL,
       messageType: EPOSPrintRecMessageTypeEnum.TRAILER,
+      font: EPOSFontEnum.NORMAL,
+      message: '',
+    }),
+    new EPOSPrintRecMessage({
+      messageType: EPOSPrintRecMessageTypeEnum.TRAILER,
+      font: EPOSFontEnum.NORMAL,
+      message: 'Cliente:',
+    }),
+    new EPOSPrintRecMessage({
+      messageType: EPOSPrintRecMessageTypeEnum.TRAILER,
+      font: EPOSFontEnum.NORMAL,
+      message: '',
+    }),
+    new EPOSPrintRecMessage({
+      messageType: EPOSPrintRecMessageTypeEnum.TRAILER,
+      font: EPOSFontEnum.BOLD_AND_DOUBLE_HEIGHT,
+      message: 'Budner Budner',
+    }),
+    new EPOSPrintRecMessage({
+      messageType: EPOSPrintRecMessageTypeEnum.TRAILER,
+      font: EPOSFontEnum.NORMAL,
+      message: 'Arrivo 04/10/2021 - Partenza 06/10/2021',
     }),
   ];
+
+  const subtotalAdjustment = new EPOSPrintRecSubtotalAdjustment({
+    adjustmentType: EPOSPrintRecAdjustmentTypeEnum.DISCOUNT_ON_SUBTOTAL_WITH_SUBTOTAL_PRINTED,
+    amount: 30,
+    description: 'SCONTO EUR',
+    justification: '1',
+  });
 
   const res = await fp.printFiscalReceipt({
     items,
@@ -71,6 +137,8 @@ test('Epson Fiscal Printer - Print Fiscal Receipt', async () => {
     paymentDescription: 'PAGAMENTO EUR',
     itemAdjustments,
     footerMessages,
+    subtotalAdjustment,
+    subtotalOption: EPOSPrintRecSubtotalOptionEnum.ONLY_PRINT,
   });
 
   const expectedResult: EPOSFiscalPrintReceiptResponse = {

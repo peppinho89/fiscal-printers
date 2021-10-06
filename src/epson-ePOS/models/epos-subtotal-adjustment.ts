@@ -4,6 +4,7 @@ export interface ISubtotalAdjustment {
   adjustmentType: EPOSPrintRecAdjustmentTypeEnum;
   description: string;
   amount: number;
+  justification?: string;
 }
 
 export class EPOSPrintRecSubtotalAdjustment {
@@ -13,8 +14,10 @@ export class EPOSPrintRecSubtotalAdjustment {
       EPOSPrintRecAdjustmentTypeEnum.DISCOUNT_ON_SUBTOTAL_WITH_SUBTOTAL_PRINTED;
     this.description = subtotalAdjustmentObj?.description || '';
     this.amount = subtotalAdjustmentObj?.amount || 0;
+    this.justification = subtotalAdjustmentObj?.justification || '1';
   }
   adjustmentType: EPOSPrintRecAdjustmentTypeEnum;
   description: string;
   amount: number;
+  justification: string;
 }
